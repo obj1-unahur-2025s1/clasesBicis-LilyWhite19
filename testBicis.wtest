@@ -1,0 +1,72 @@
+import bicis.*
+import depositos.*
+
+describe "test de bicis" {
+  const bici1 =
+    new Bici(rodado = 28, largo = 150, marca = "Olmo")
+  const bici2 =
+    new Bici(rodado = 26, largo = 110, marca = "Legnano")
+  const bici3 = 
+    new Bici(rodado = 20, largo = 90, marca = "Legnano")
+  const farolito1 = new Farolito()
+  const farolito2 = new Farolito()
+  const canasto1 = new Canasto(volumen = 8)
+  const morral1 = new Morral(largo = 21, tieneOjoDeGato = true)
+  const morral2 = new Morral(largo = 6, tieneOjoDeGato = false)
+
+  const deposito1 = new Deposito()
+
+  method initialize(){
+    bici1.agregarAccesorio(farolito1)
+
+    bici2.agregarAccesorio(canasto1)
+    bici2.agregarAccesorio(farolito2)
+    bici2.agregarAccesorio(morral1)
+    
+    bici3.agregarAccesorio(morral2)
+
+    deposito1.guardarBicis([bici1, bici2, bici3])
+  }
+  test "caracteristicas de la bici 1: altura 85, velocidad de cruzero = 34
+    carga = 0, peso = 14.5, tiene luz, tiene solo un accesorio liviano" {
+    assert.equals(85, bici1.altura())
+    assert.equals(34, bici1.velocidadCruzero())
+    assert.equals(0, bici1.carga())
+    assert.equals(14.5, bici1.peso())
+    assert.that(bici1.tieneLuz())
+    assert.equals(1, bici1.accesoriosLivianos())
+  }
+  test "caracteristicas de la bici 2: altura 80, velocidad de cruzero = 28
+    carga = 23, peso = 15.5, tiene dos accesorios livianos" {
+    assert.equals(80, bici2.altura())
+    assert.equals(28, bici2.velocidadCruzero())
+    assert.equals(23, bici2.carga())
+    assert.equals(15.5, bici2.peso())
+    assert.that(bici2.tieneLuz())
+    assert.equals(2, bici2.accesoriosLivianos())
+  }
+  test "caracteristicas de la bici 3: altura 65, velocidad de cruzero = 22
+    carga = 2, peso = 11.2, no tiene accesorios livianos" {
+    assert.equals(65, bici3.altura())
+    assert.equals(22, bici3.velocidadCruzero())
+    assert.equals(2, bici3.carga())
+    assert.equals(11.2, bici3.peso())
+    assert.notThat(bici3.tieneLuz())
+    assert.equals(0, bici3.accesoriosLivianos())
+  }
+
+  test "caracteristicas del deposito 1, con bici 1, bici 2 y bici 3:
+  las bicicletas rapidas son: bici1 y bici2; las marcas son: Olmo y Legnano
+  no es nocturno; tiene una bici que puede cargar 10kg, pero no una 
+  que pueda cargar 50kg"{
+    assert.equals([bici1, bici2], deposito1.bicisRapidas())
+    assert.equals(["Olmo", "Legnano"], deposito1.listaDeMarcas())
+    assert.notThat(deposito1.esNocturno())
+    assert.that(deposito1.hayAlMenosUnaBiciConCarga(10))
+    assert.notThat(deposito1.hayAlMenosUnaBiciConCarga(50))
+  }
+  test "el deposito 1 con bici 1 t bici 2, si es nocturno"{
+    deposito1.sacarBici(bici3)
+    assert.that(deposito1.esNocturno())
+  }
+}
